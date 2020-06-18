@@ -96,8 +96,12 @@ public abstract class SaveVersion extends SaveFileReader{
 
     public void writeMap(DataOutput stream) throws IOException{
         //write world size
+        stream.writeShort(65535);
+        stream.writeShort(65535);
+        /*
         stream.writeShort(world.width());
         stream.writeShort(world.height());
+        */
 
         //floor + overlay
         for(int i = 0; i < world.width() * world.height(); i++){
